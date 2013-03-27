@@ -47,8 +47,8 @@ Sandboxing on Linux} %% without formatting
   systems and web services. However some important security concerns need to be
   addressed before this can be put in production. The prime use case in the
   design of \R has always been a single statistician running \R on the local
-  machine through the interactive console. As a result the execution
-  environment of \R is entirely unrestricted, which could potentially result in
+  machine through the interactive console. Therefore the execution
+  environment of \R is entirely unrestricted, which could result in
   malicious behavior or excessive use of hardware resources in a shared
   environment. Properly securing an \R process turns out to be a complex
   problem. We describe several approaches and illustrate potential issues using
@@ -101,10 +101,10 @@ computing platforms will likely become an integral part of the publication
 process \citep{asareport}. This could address some of the hardware challenges,
 but also contribute towards reproducible research and further socialize data
 analysis, i.e. improve learning, collaboration and integration. These developments
-change the role of \R from and end-user tool towards a general purpose computational 
+change the role of \R from and end-user tool towards a computational 
 back-end, powering systems and software stacks with high quality analytics and visualization. 
 
-However, one reason developers are still reluctant to build on \R are concerns
+However, developers are still reluctant to build on \R due to concerns
 regarding security and management of shared hardware resources. Reliable
 software systems require components which behave predictably and cannot be
 abused. Because \R was primarily designed with the local user in mind, security
@@ -116,8 +116,8 @@ facilities to the public for \R based services. It is our personal experience
 that the complexity of managing security is easily underestimated when designing
 stacks or systems that build on \R. Some of the problems are very domain
 specific to scientific computing, and make embedding \R quite different
-from embedding other software or languages. Properly addressing these challenges
-could facilitate wider adoption of \R as a general purpose computational back-end engine.
+from embedding other software environments. Properly addressing these challenges
+could facilitate wider adoption of \R as a general purpose statistical engine.
 
 \subsection{Security when using contributed code}
 
@@ -130,10 +130,10 @@ basis, dozens of packages and package updates submitted to the
 \emph{Comprehensive R Archive Network} (CRAN) \citep{ripleycran}.
 These packages contain code written in \R, \C, \Fortran, \Cpp, \Java, etc. It
 is unfeasible for the CRAN maintainers to do a thorough audit of the
-full code that is submitted, every time. Some packages even contain pre-compiled \Java code for which the source is not included at all. Furthermore, \R packages
+full code that is submitted, every time. Some packages even contain pre-compiled \Java code for which the source is not included. Furthermore, \R packages
 are not signed with a private key as is the case for e.g.\ packages in most
 \Linux distributions, which makes it hard to verify the identity of the author. As
-CRAN packages are automatically build and installed on hundreds, maybe thousands
+CRAN packages are automatically build and installed on hundreds, possibly thousands
 of machines around the world, they form an interesting target for abuse.
 Hence there is a real dangler of packages containing malicious code making
 their way unnoticed into the repositories. Risks are even greater for packages 
@@ -154,18 +154,18 @@ to both user and system administrator, and might one day prevent a lot of troubl
 
 
 This paper explores some of the potential problems, along with approaches and
-methods of securing \R. Different aspects and concerns of
+methods of securing \R. Different aspects of
 security in the context of \R are illustrated using personal
 experiences and examples of bad or malicious code. We will explain how untrusted
 code can be executed inside a \emph{sandboxed} process. Sandboxing in
 this context is a somewhat informal term for creating an execution environment which limits
 capabilities of harmful and undesired behavior. 
-As it turns out, \R itself is not very suitable for implementing
+As it turns out, \R itself is not very suitable for implementing such
 access control policies, and the only way to properly enforce security is by
 leveraging features from the operating system. To exemplify this approach, an
 implementation based on \AppArmor is provided which can be
 used on \Linux distributions as the basis for a sandboxing toolkit. This package
-is used throughout the paper to show one way of addressing issues.
+is used throughout the paper to demonstrate one way of addressing issues.
 
 However, we want to emphasize that we don't claim to have solved the problem.
 This paper mostly serves an introduction to security for the \R
@@ -180,7 +180,7 @@ beyond the ones mentioned in this paper, many of which might be specific to
 certain applications or systems. We hope to invoke a discussion in the community
 about potential security issues related to using \R in
 different scenarios, and encourage those comfortable with other platforms or who
-use \R other purposes to join the discussion and share their
+use \R for other purposes to join the discussion and share their
 concerns, experiences and solutions.
 
 \section[Use cases and concerns of sandboxing R]{Use cases and concerns of
@@ -190,7 +190,7 @@ Let us start by taking a step back and put this research in perspective by
 describing some concrete use cases where security in \R could be a
 concern. Below three simple examples of situations in which it is useful to
 be able to run \R code in a sandbox. The use cases are ordered by
-complexity and require increasingly advanced sandboxing methods.
+complexity and require increasingly advanced sandboxing technology.
 
 
 \subsubsection{Running untrusted code}
@@ -218,8 +218,8 @@ and projects. In practice, managing multiple machines is a bit unpractical and
 not something that we might want to do on a daily basis. It would be more convenient if
 we could just sandbox our regular \R environment for the duration of installing
 and using the new package with a tailored security policy. If the sandbox is
-flexible and unobtrusive enough to not interfere with our daily workflow, we could
-even make a habit out of using it every time we use contributed code (which to
+flexible and unobtrusive enough not to interfere with our daily workflow, we could
+even make a habit out of using it each time we use contributed code (which to
 most users means every day).
 
 \subsubsection{Shared resources}
@@ -234,9 +234,9 @@ million times on generated datasets of varying properties. On her own machine
 this would take months to complete, but the super computer can finish the job
 overnight. The administrator would like to set up a web service for
 this and other researchers to run such R scripts. However he is
-concerned about users interfering with each others work, or breaking anything
+anxious about users interfering with each others work, or breaking anything
 on the machine. Furthermore he wants to make sure that system resources are
-allocated in a fair way so that no single user can consume all memory or cpu on
+allocated in a fair way such that no single user can consume all memory or cpu on
 the system.
 
 \subsubsection{Embedded systems and services}
@@ -260,18 +260,18 @@ which provides low level access to an \R session over a socket \citep{Rserve}.
 The third use case originates from these developments: it can be summarized as
 confining and managing \R processes inside of embedded systems and services.
 This use case is largely derived from our personal needs: we are using \R
-inside various systems and web services that provide on-demand calculations and
+inside various systems and web services that provide on-demand calculating and
 plotting over the internet. These services have to respond quickly and with
 minimal overhead to incoming requests, and should scale to serve many jobs per
-second. Furthermore the systems have to be stable, requiring that jobs should
+second. Furthermore the systems need to be stable, requiring that jobs should
 always return within a given timeframe. Depending on user and the type of job,
 different security restrictions might be appropriate. Some services specifically allow
 for arbitrary execution of \R code. Also we need a way to
 dynamically enforce limits on the use of memory, processors and disk space on a
-per process basis. These requirements demands a more flexible and finer degree
+per process basis. These requirements demand a more flexible and finer degree
 of control over the process privileges and restrictions than the first two use
 cases. It encouraged us to explore more advanced methods than the conventional
-tools (user separation, chroot, etc) and has been the most central motivation of this research.
+tools and has been the most central motivation of this research.
 
 \subsection{System privileges and hardware resources}
 
@@ -287,7 +287,7 @@ or process is allowed to consume.
 
 The \R console gives the user direct access to the operating system
 and does not implement any privilege restrictions or access control policies to
-prevent malicious use. In fact, some of the basic functionality in \R actually
+prevent malicious use. In fact, some of the basic functionality in \R
 assumes quite profound access to the system, e.g.\ read access to system files,
 or the privilege of running system shell commands. However, running untrusted
 \R code without any restrictions can get us in serious
@@ -301,7 +301,7 @@ information.
 
 Even an \R process running as a non-privileged user can do a lot of
 harm. Potential perils include code containing or downloading a virus or
-security exploit, or which searches the system for sensitive personal information.
+security exploit, or searching the system for sensitive personal information.
 Appendix \ref{creditcard} demonstrates a hypothetical example of a simple function that
 scans the home directory for documents containing credit card numbers. Another
 increasing global problem are viruses which make the machine part of a so called
@@ -311,7 +311,7 @@ are remotely controlled to used for illegal activities
 centralized server and waits for instructions from the owner of the botnet.
 Botnets are mostly used to send spam or to participate in DDOS attacks:
 centrally coordinated operations in which a large number of machines on the
-internet is used to flood a target server or provider with network traffic with
+internet is used to flood a target with network traffic with
 the goal of taking it down by overloading it \citep{mirkovic2004taxonomy}. Botnet
 software is often invisible to the user of an infected machine and can run with
 very little privileges: simple network access is sufficient to do most of its work.
@@ -331,7 +331,7 @@ relevant, as \R is used frequently in these types of organizations.
 
 \subsubsection{Resource restrictions}
 
-The other category of problems is not so necessarily related to deliberate abuse, and
+The other category of problems is not necessarily related to deliberate abuse, and
 might even arise completely unintentionally. It involves proper management, 
 allocation and restricting of hardware. 
 
@@ -346,10 +346,10 @@ in \Linux or \texttt{ESC} in Windows. If this doesn't work we can open the task
 manager and tell the operating system to kill the process, and if worst comes
 to worst we can decide to reboot our machine.
 
-However, when \R is embedded in a bigger system, the situation is
-more complicated, and we have to think about these scenarios in advance. If
+However, when \R is embedded in a system, the situation is
+more complicated and we need to cover these scenarios in advance. If
 an out-of-control \R job is not properly detected and terminated, the process
-might very well run forever and take down our service, or even the entire machine. This has
+might very well run indefinitely and take down our service, or even the entire machine. This has
 actually been a major problem that we personally experienced in an early
 implementation of a public web service for mixed modelling \citep{yeroonlme4}
 which uses the \texttt{lme4} package \citep{lme4}. What happened was that users
@@ -366,17 +366,16 @@ Unfortunately this example is not an exception. The behavior of \R can be
 unpredictable, which is an aspect easily overlooked by
 (non-statistician) developers. When a system calls out to e.g.\ an \texttt{SQL}
 or \texttt{PHP} script, the procedure usually runs without any problems and the
-time to process is proportional to the size of the data, i.e.\ the number
+processing time is proportional to the size of the data, i.e.\ the number
 of records returned by \texttt{SQL}. However, in an \R
 script many things can go wrong, even though the script itself is perfectly
 fine.  Algorithms might not converge, data might be rank-deficient, or missing
 values throw a spanner in the works.
 Statistical computing is full of such intrinsic edge-cases and unexpected caveats.
- Even when only using tested code or
-predefined services, this does not entirely guarantee smooth and timely
-completion of \R jobs, especially if the data is dynamic. When using
+Using only tested code or predefined services does not entirely guarantee smooth and timely
+completion of \R jobs, especially if the data is dynamic. When embedding
 \R in systems or shared facilities, it is important that we acknowledge this
-aspect and have systems in place to manage processes without
+facet and have systems in place to manage jobs and mitigate problems without
 manual intervention.
 
 \section[Different approaches of confining R]{Different approaches of confining
@@ -395,7 +394,7 @@ package introduced in section \ref{rapparmor}.
 
 \subsection{Application level security: predefined services}
 
-The most common approach to preventing system abuse is simply to only allow a
+The most common approach to prevent malicious use is simply to only allow a
 limited set of predefined services, that have been deployed by a trusted
 developer and cannot be abused. This is generally the case for websites
 containing dynamic content though e.g.\ \proglang{CGI} or \proglang{PHP} scripts.
@@ -462,7 +461,7 @@ some graphical interface.
 
 \begin{CodeChunk}
 \begin{CodeInput}
-glm(userformula, data=cars)
+coef(lm(userformula, data=cars))
 \end{CodeInput}
 \end{CodeChunk}
 
@@ -530,27 +529,30 @@ function calls might not reveal themselves until runtime, when it is often too
 late. We are actually quite convinced that it is nearly impossible to really
 sanitize an \R script just by inspecting the source code.
 
-An alternative method to implement sanitizing is to define an extensive blacklist of
+An alternative method to prevent malicious code is by defining an extensive blacklist of
 functions that a user is not allowed to call, and disable these at runtime. The
-\pkg{sandboxR} \citep{sandboxR} package uses this method to block access
-to all \R functions that provide access to the file system. It evaluates
+\pkg{sandboxR} package \citep{sandboxR}  does this to block access
+to all \R functions providing access to the file system. It evaluates
 the user-supplied code in an environment in which all blacklisted functions are
 masked from the calling namespace. This is fairly effective and provides a barrier against smaller possible attacks or casual errors. However, the method relies on exactly knowing and
 specifying which functions are \emph{safe} and which are not. The package
 author has done this for the thousands of \R functions in the base package and
-we assume he has done a good job. However, it makes it hard to maintain and
-cumbersome to generalize the approach to other \R packages (by default the
-method does not allow loading other packages). Furthermore the entire method
-falls if  one function has been overlooked or changes between
-versions, which does make the method quite vulnerable. In \R even the most
-fundamental primitive functions can be exploited to circumvent namespace
-masking, so it is unwise to rely solely on blacklisting listing for security. 
+we assume he has done a good job. But it is quite hard to maintain and
+cumbersome to generalize to other \R packages (by default the
+method does not allow loading other packages). Everything
+falls if one function has been overlooked or changes between
+versions, which does make the method vulnerable. Furthermore, in \R even the most primitive functions can be exploited to tamper with scoping and namespaces,
+so it is unwise to rely solely on this for security. 
 
 Moreover, even when sanitizing of the code is successful, this method does not
 limit the use of hardware resources in any way. Hence, additional methods are
 still required to prevent excessive use of resources in a public environment.
-However, when used for example in combination with the \RAppArmor package, 
-something like \pkg{sandboxR} could be useful to detect problematic calls earlier on and present more informative errors naming a specific forbidden functions rather than just "permission denied".
+Packages like \pkg{sandboxR} should probably only be used to supplement system
+level security like implemented in the \RAppArmor package.
+They can be useful to detect problematic calls earlier on and present informative errors naming a specific forbidden function rather than just "permission denied".
+But blacklisting solutions are not waterproof and should not be considered a full
+security solution.
+
 
 \subsection{Sandboxing on the level of the operating system}
 
@@ -605,11 +607,11 @@ security module for the \Linux kernel. It allows for associating programs and
 processes with \emph{security profiles} that restrict the capabilities and
 permissions of that process. There are two ways of using \AppArmor. One is to
  associate a single, static security profile with every \R
-process. This can only be done by the system administrator and does not require
-\RAppArmor (see also section section \ref{usr.bin.r}). However, this makes it a bit limited
-and usually overly restrictive. We want more flexible that set different policies, priorities and restrictions for different users or tasks.
+process. This can be done only by the system administrator and does not require
+our \R package (see also section section \ref{usr.bin.r}). However, this is
+usually overly restrictive. We want more flexibility to set different policies, priorities and restrictions for different users or tasks.
 
-The \RAppArmor package on the other hand exposes \R functions that interface
+The \RAppArmor package exposes \R functions that interface
 directly to \Linux system calls related to setting privileges and restrictions
 of a running process. Besides applying security profiles, \RAppArmor also
 interfaces to the \texttt{prlimit} call in \Linux, which sets \texttt{RLIMIT}
@@ -629,8 +631,8 @@ up to level of the \R language. Using \texttt{eval.secure}, different parts of
 our code can run with different security restrictions with minimal overhead,
 something we call \emph{dynamic sandboxing}. This is incredibly powerful in the
 context of embedded services, and opens the door applications which
-explicitly allow for custom code execution; something that previously always had
-to be avoided for security reasons. This enables a new approach to socialize scientific computing and lies at the core of the \texttt{OpenCPU} framework \citep{opencpu}, which exposes a public HTTP API to run and share \R code on a central server.
+explicitly allow for arbitrary code execution; something that previously always had
+to be avoided for security reasons. This enables a new approach to socialize statistical computing and lies at the core of the \texttt{OpenCPU} framework \citep{opencpu}, which exposes a public HTTP API to run and share \R code on a central server.
 
 \subsection[AppArmor profiles]{\AppArmor profiles}
 
@@ -651,16 +653,14 @@ the \pkg{r-base} package (and its dependencies) by \cite{batesusing} for
 Debian/Ubuntu, currently maintained by Dirk Eddelbuettel.
 
 The \texttt{RAppArmor} package and the included profiles work ``out of the
-box'' on Ubuntu 12.04 (Precise) and up. It has also successfully been tested on Debian
-7.0 (Wheezy) and up, however as of writing of this paper, this distribution is
-still in the ``testing'' phase. Furthermore the package has been successfully
-build on OpenSuse 12.1 and up. Note that Suse systems organize the file system in a
+box'' on Ubuntu 12.04 (Precise) and up, Debian 7.0 (Wheezy) and up. The package can also be used on OpenSuse 12.1 and up, however Suse systems organize the file system in a
 slightly different way than Ubuntu and Debian, so the profiles need to be
-modified accordingly. The root directory of the \RAppArmor source package contains a text file with some specific instructions for Debian and OpenSuse.
+modified accordingly. The \RAppArmor website contains some specific instructions regarding various distributions.
 
-Again, we want to emphasize that the package and included profiles should mostly
-be seen as a \emph{reference implementation}. Using the package we demonstrate
-how to create a working sandbox in \R using \AppArmor. The \RAppArmor
+
+Again, we want to emphasize that the package should mostly
+be seen as a \emph{reference implementation} to demonstrate
+how to create a working sandbox in \R. The \RAppArmor
 package provides the tools to set security restrictions and example profiles to get the user started. However, depending on system and application, different policies might be appropriate. 
 It is still up to the administrator to determine which privileges and restrictions are appropriate for a certain system or purpose. The example profiles are merely a starting point and need
  fine-tuning for specific applications.
@@ -668,7 +668,7 @@ It is still up to the administrator to determine which privileges and restrictio
 \subsection{Automatic installation}
 
 The \RAppArmor package consists of \R software and a number of example security
-profiles. On Ubuntu it is easiest installed using binary \texttt{deb} packages provided through launchpad:
+profiles. On Ubuntu it is easiest installed using binary builds provided through launchpad:
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -971,7 +971,7 @@ R> A <- rnorm(1e7)
 
 The exact meaning of the different limits can be found in the \texttt{RAppArmor}
 package documentation (e.g.\ \texttt{?rlimit\_as}) or in the documentation of
-the distribution \citep{ubunturlimit}.
+the distribution, e.g.\ \cite{ubunturlimit}.
 
 \subsection[Activating AppArmor profiles]{Activating \AppArmor profiles}
 
@@ -991,7 +991,7 @@ the current process, the process cannot call \texttt{aa\_change\_profile} again
 to escape from the profile (that would defeat the purpose). The only exception
 to this rule are profiles that contain an explicit \texttt{change\_profile}
 directive. The \texttt{aa\_change\_hat} function on the other hand is designed to
-associate a process with a security profile in a way that does allow to escape
+associate a process with a security profile in a way that does allow it to escape
 out of the security profile. In order to realize this, the
 \texttt{aa\_change\_hat} takes a second argument called \texttt{magic\_token},
 which defines a secret key that can be used to \emph{revert} the hat. When
@@ -1102,9 +1102,9 @@ the \texttt{usr.bin.r} file defines a profile specific to a filepath:
 
 When using the latter syntax, the profile is automatically associated every time
 the file \texttt{/usr/bin/R} is executed (which is the file that runs when
-\R is entered in the shell). This way we can set some default security
+\R is started from the shell). This way we can set some default security
 restrictions for our daily work. Profiles tied to a specific program can be
-activated by the administrator using:
+activated only by the administrator using:
 \begin{verbatim}
   sudo aa-enforce usr.bin.r
 \end{verbatim}
@@ -1115,7 +1115,6 @@ started. To stop enforcing the restrictions, the administrator can run:
 \end{verbatim}
 After disabling the profile, the \R program can be started without any
 restrictions.
-
 Note that the \texttt{usr.bin.r} profile does \textbf{not} grant permission to
 change profiles. Hence, once the \texttt{usr.bin.r} profile is in enforce mode,
 we cannot use the \texttt{eval.secure} or \texttt{aa\_change\_profile} functions
@@ -1287,8 +1286,8 @@ discovered in some of the standard libraries.
 The \texttt{r-base} profile does not allow access to the compiler, nor does it
 allow for loading (\texttt{m}) or execution (\texttt{ix}) of files in places
 where it can also write. If we want user to be able to compile e.g.
-\Cpp code, we will need to give it access to the compiler. In order
-to do so, we need to add these lines:
+\Cpp code, the policy needs grant access to the compiler. Assuming \texttt{GCC} is installed,
+the following lines can be added to the profile:
 
 \begin{verbatim}
 /usr/include/** r,
@@ -1296,10 +1295,9 @@ to do so, we need to add these lines:
 /tmp/** rmw,
 \end{verbatim}
 
-Note especially the last line. The \texttt{m} allows \R to load shared
-objects into memory from anywhere under \texttt{/tmp}. This is needed to load
-the compiled code after it has been installed to a temporary directory. Note
-that this does not come without a cost: compiled code can potentially contain
+Note especially the last line. The combination of \texttt{w} and \texttt{m} access modes
+allows \R to load a shared object into memory from after installing it in a temporary directory.
+This does not come without a cost: compiled code can potentially contain
 malicious code or even exploits that can do harm when loaded into memory. If
 this privilege is not needed, it is generally recommended to only allow
 \texttt{m} and {ix} access modes on files that have been installed by the
@@ -1344,17 +1342,15 @@ The downloaded source packages are in
 Appendix \ref{r-user} defines a profile named \texttt{r-user}. This profile is
 designed to be a nice balance between security and freedom for day to day use of
 R. It extends the \texttt{r-compile} profile with some additional privileges
-with respect to the user's home directory. The variable \texttt{@\{HOME\}} is
-defined in the \texttt{tunables/global} include that ships with \AppArmor and matches the location of the user home directory, i.e.\ \texttt{/home/jeroen} for a user named ``jeroen''.
-The profile assumes that there is a directory named \R directly inside
-the home directory (e.g \texttt{/home/jeroen/R}), to which \R can read and
-write. Furthermore, \R can load and execute files in the directories
+in the user's home directory. The variable \texttt{@\{HOME\}} is
+defined in the \texttt{/etc/apparmor.d/tunables/global} include that ships with \AppArmor and matches the location of the user home directory, i.e.\ \texttt{/home/jeroen/}.
+If there is a exists a directory named \R directly inside the home directory (e.g \texttt{/home/jeroen/R/}), \R is allowed to read and here. Furthermore, \R can load and execute files in the directories
 \texttt{i686-pc-linux-gnu-library} and \texttt{x86\_64-pc-linux-gnu-library}
-inside of this \R directory. These are the standard locations where
+inside of this directory. These are the standard locations where
 \R installs a user's personal package library.
 
-Using the \texttt{r-user} profile, the user will be able to do most of his day
-to day work, including installing and loading new packages in his personal
+With the \texttt{r-user} profile, we can do most of our day
+to day work, including installing and loading new packages in our personal
 library, while still being protected against most malicious activities. The
 \texttt{r-user} profile is also the basis of the default \texttt{usr.bin.r}
 profile mentioned in section \ref{usr.bin.r}.
@@ -1633,8 +1629,7 @@ Error: cannot allocate vector of size 76.3 Mb
 \label{cputime}
 
 Suppose we are hosting a web service and we want to kill jobs that do not finish
-in 5 seconds. Below is a snippet that will take much more than 5 seconds to complete on most
-machines. Note that because \R calling out to \texttt{C} code, it will not be
+within 5 seconds. Below is a snippet that will take much more than 5 seconds to complete on most machines. Note that because \R calling out to \texttt{C} code, it will not be
 possible to terminate this function prematurely using R's \texttt{setTimeLimit}
 or even using \texttt{CTRL+C} in an interactive console. If this would happen
 inside of a bigger system, the entire service might become unresponsive.

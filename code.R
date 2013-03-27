@@ -56,6 +56,13 @@ getgid()
 getuid()
 system('whoami')
 
+# New session:
+#
+
+eval(system('whoami', intern=TRUE))
+eval.secure(system('whoami', intern=TRUE), uid=1000)
+eval(system('whoami', intern=TRUE))
+
 
 ##### Section 3.6
 # Example of setting priority
@@ -64,12 +71,13 @@ library("RAppArmor")
 getpriority()
 setpriority(10)
 getpriority()
+setpriority(5)
 
 # New session:
 #
 library("RAppArmor")
 getpriority()
-eval.secure(system('nice', intern=T), priority=10)
+eval.secure(system('nice', intern=TRUE), priority=10)
 getpriority()
 
 

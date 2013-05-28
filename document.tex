@@ -67,7 +67,7 @@ Dynamic Sandboxing on Linux}
   UCLA Department of Statistics\\
   University of California\\
   E-mail: \email{jeroen.ooms@stat.ucla.edu}\\
-  URL: \url{http://jeroenooms.github.com}
+  URL: \url{http://jeroenooms.github.io}
 }
 
 \begin{document}
@@ -85,63 +85,59 @@ fair to say that the project has matured to a production-ready computation tool.
 However, practices in statistical computation have changed since the initial
 design of \R in 1993 \citep{ihaka1998r}. Internet access, public cloud computing
 \citep{armbrust2010view}, live and open data and scientific super computers are
-transforming the landscape of data analysis.
-This is only the beginning. Sharing of data, code and results on social
-computing platforms will likely become an integral part of the publication
-process \citep{asareport}. This could address some of the hardware challenges,
-but also contribute towards reproducible research and further socialize data
-analysis, i.e. improve learning, collaboration and integration. These
-developments change the role of \R from and end-user tool towards a
-computational back-end, powering systems and software stacks with high quality
-analytics and visualization.
+transforming the landscape of data analysis. This is only the beginning. Sharing
+of data, code and results on social computing platforms will likely become an
+integral part of the publication process \citep{asareport}. This could address
+some of the hardware challenges, but also contribute towards reproducible
+research and further socialize data analysis, i.e. improve learning,
+collaboration and integration. These developments shift the role of
+statistical software towards more general purpose computational back-ends,
+powering systems and applications with embedded analytics and visualization.
 
-However, developers are still reluctant to build on \R due to concerns regarding
-security and management of shared hardware resources. Reliable software systems
-require components which behave predictably and cannot be abused. Because \R was
-primarily designed with the local user in mind, security restrictions and
-unpredictable behavior have not been considered a major concern in the design of
-the software. Hence, these problems will need to be addressed somehow before
-developers can feel comfortable making \R part of their infrastructure, or
-convince administrators to expose their facilities to the public for \R based
-services. It is our personal experience that the complexity of managing security
-is easily underestimated when designing stacks or systems that build on \R. Some
-of the problems are very domain specific to scientific computing, and make
-embedding \R quite different from embedding other software environments.
-Properly addressing these challenges could facilitate wider adoption of \R as a
-general purpose statistical engine.
+However, one reason developers might still be reluctant to build on \R is
+concerns regarding security and management of shared hardware resources.
+Reliable software systems require components which behave predictably and
+cannot be abused. Because \R was primarily designed with the local user in
+mind, security restrictions and unpredictable behavior have not been considered
+a major concern in the design of the software. Hence, these problems will need
+to be addressed somehow before developers can feel comfortable making \R part
+of their infrastructure, or convince administrators to expose their facilities
+to the public for \R based services. It is our personal experience that the
+complexity of managing security is easily underestimated when designing stacks
+or systems that build on \R. Some of the problems are very domain specific to
+scientific computing, and make embedding \R quite different from embedding
+other software environments. Properly addressing these challenges can help
+facilitate wider adoption of \R as a general purpose statistical engine.
 
 \subsection{Security when using contributed code}
 
-
-Building systems on \R has been the main motivation for this research.
-However, security is a concern for \R in other contexts as well. As the
-community is growing rapidly, it becomes dangerous to rely on social courtesy in
-contributed code. For example, on a daily basis, dozens of packages and package
-updates submitted to the \emph{Comprehensive R Archive Network} (CRAN)
-\citep{ripleycran}.
-These packages contain code written in \R, \C, \Fortran, \Cpp, \Java, etc. It is
-unfeasible for the CRAN maintainers to do a thorough audit of the full code that
-is submitted, every time. Some packages even contain pre-compiled \Java code for
-which the source is not included. Furthermore, \R packages are not signed with a
-private key as is the case for e.g.\ packages in most \Linux distributions,
-which makes it hard to verify the identity of the author. As CRAN packages are
-automatically build and installed on hundreds, possibly thousands of machines
-around the world, they form an interesting target for abuse.
-Hence there is a real dangler of packages containing malicious code making their
-way unnoticed into the repositories. Risks are even greater for packages
-distributed through channels without any form of code review, for example by
-email or through the increasingly popular Github repositories
-\citep{torvalds2010git,dabbish2012social}.
+Building systems on \R has been the main motivation for this research. However,
+security is a concern for \R in other contexts as well. As the community is
+growing rapidly, relying on social courtesy in contributed code becomes more
+dangerous. For example, on a daily basis, dozens of packages and package updates
+submitted to the \emph{Comprehensive R Archive Network} (CRAN)
+\citep{ripleycran}. These packages contain code written in \R, \C, \Fortran,
+\Cpp, \Java, etc. It is unfeasible for the CRAN maintainers to do a thorough
+audit of the full code that is submitted, every time. Some packages even contain
+pre-compiled \Java code for which the source is not included. Furthermore, \R
+packages are not signed with a private key as is the case for e.g.\ packages in
+most \Linux distributions, which makes it hard to verify the identity of the
+author. As CRAN packages are automatically build and installed on hundreds,
+possibly thousands of machines around the world, they form an interesting
+target for abuse. Hence there is a real dangler of packages containing
+malicious code making their way unnoticed into the repositories. Risks are even
+greater for packages distributed through channels without any form of code
+review, for example by email or through the increasingly popular Github
+repositories \citep{torvalds2010git,dabbish2012social}.
 
 In summary, it is not overly paranoid of the \R user to be a bit cautious when
 installing and running contributed code downloaded from the internet. However,
-things don't have to be as critical as described above.
-Controlling security is a good practice, even when there are no immediate
-reasons for concern. Some users simply might want to prevent \R from
-accidentally erasing files or interfering with other activities on the machine.
-Making an effort to ensure \R is running safely with no unnecessary privileges
-can be reassuring to both user and system administrator, and might one day
-prevent a lot of trouble.
+things don't have to be as critical as described above. Controlling security is
+a good practice, even when there are no immediate reasons for concern. Some
+users simply might want to prevent \R from accidentally erasing files or
+interfering with other activities on the machine. Making an effort to ensure \R
+is running safely with no unnecessary privileges can be reassuring to both user
+and system administrator, and might one day prevent a lot of trouble.
 
 \subsection[Sandboxing the R environment]{Sandboxing the \R environment}
 
@@ -152,10 +148,9 @@ illustrated using personal experiences and examples of bad or malicious code. We
 will explain how untrusted code can be executed inside a \emph{sandboxed}
 process. Sandboxing in this context is a somewhat informal term for creating an
 execution environment which limits capabilities of harmful and undesired
-behavior.
-As it turns out, \R itself is not very suitable for implementing such access
-control policies, and the only way to properly enforce security is by leveraging
-features from the operating system. To exemplify this approach, an
+behavior. As it turns out, \R itself is not very suitable for implementing such
+access control policies, and the only way to properly enforce security is by
+leveraging features from the operating system. To exemplify this approach, an
 implementation based on \AppArmor is provided which can be used on \Linux
 distributions as the basis for a sandboxing toolkit. This package is used
 throughout the paper to demonstrate one way of addressing issues.
@@ -165,15 +160,15 @@ This paper mostly serves an introduction to security for the \R community, and
 hopefully creates some awareness that this is a real issue moving forward. The
 \RAppArmor package is one approach and a good starting point for experimenting
 with dynamic sandboxing in \R. However it mostly serves as a proof of concept of
-the general idea of confining and controlling \R in order to extend its
-applicability. The paper describes examples of use cases, threats, policies and
-anecdotes to give the reader a sense of what is involved with this topic.
-Without any doubt, there are concerns beyond the ones mentioned in this paper,
-many of which might be specific to certain applications or systems. We hope to
-invoke a discussion in the community about potential security issues related to
-using \R in different scenarios, and encourage those comfortable with other
-platforms or who use \R for other purposes to join the discussion and share
-their concerns, experiences and solutions.
+the general idea of confining and controlling an \R process. The paper describes
+examples of use cases, threats, policies and anecdotes to give the reader a
+sense of what is involved with this topic. Without any doubt, there are concerns
+beyond the ones mentioned in this paper, many of which might be specific to
+certain applications or systems. We hope to invoke a discussion in the community about
+potential security issues related to using \R in different scenarios, and
+encourage those comfortable with other platforms or who use \R for different
+purposes to join the discussion and share their concerns, experiences and
+solutions.
 
 \section[Use cases and concerns of sandboxing R]{Use cases and concerns of
 sandboxing \R}
@@ -207,7 +202,7 @@ be configured for read-only sharing of resources between host and guest machine,
 but we would still need separate virtual machines for different tasks and
 projects. In practice, managing multiple machines is a bit unpractical and not
 something that we might want to do on a daily basis. It would be more convenient
-if we could just sandbox our regular \R environment for the duration of
+if we could instead sandbox our regular \R environment for the duration of
 installing and using the new package with a tailored security policy. If the
 sandbox is flexible and unobtrusive enough not to interfere with our daily
 workflow, we could even make a habit out of using it each time we use
@@ -224,7 +219,7 @@ simulation study, and fit a complex model a million times on generated datasets
 of varying properties. On her own machine this would take months to complete,
 but the super computer can finish the job overnight. The administrator would
 like to set up a web service for this and other researchers to run such R
-scripts. However he is anxious about users interfering with each others work, or
+scripts. However he is worried about users interfering with each others work, or
 breaking anything on the machine. Furthermore he wants to make sure that system
 resources are allocated in a fair way such that no single user can consume all
 memory or cpu on the system.
@@ -233,7 +228,7 @@ memory or cpu on the system.
 
 There have numerous efforts to facilitate integration of \R functionality into
 3rd party systems, both for open source and proprietary purposes. Major
-commercial vendors like Oracle, IBM and SAS have included R interfaces in their
+commercial vendors like Oracle, IBM and SAS have included \R interfaces in their
 products. Examples of open source interfaces from popular general purpose
 languages are \texttt{RInside} \citep{RInside}, which embeds \R into \Cpp
 environments, and \texttt{JRI} which embeds \R in \Java software
@@ -242,7 +237,7 @@ environments, and \texttt{JRI} which embeds \R in \Java software
 \texttt{RinRuby} is a \Ruby library that integrates the \R interpreter in Ruby
 \citep{dahl2008rinruby}. Littler provides hash-bang (i.e.\ script starting with
 \texttt{\#!/some/path}) capability for \R \citep{littler}. The Apache2 module
-RApache  (\texttt{mod\_R}) \citep{rapache} makes it possible to run \R scripts
+rApache (\texttt{mod\_R}) \citep{rapache} makes it possible to run \R scripts
 from within the Apache2 web server. \cite{heiberger2009r} provide a series of
 tools to call \R from DCOM clients on Windows environments, mostly to support
 calling \R from Microsoft Excel. Finally, \texttt{RServe} is TCP/IP server which
@@ -251,18 +246,18 @@ provides low level access to an \R session over a socket \citep{Rserve}.
 The third use case originates from these developments: it can be summarized as
 confining and managing \R processes inside of embedded systems and services.
 This use case is largely derived from our personal needs: we are using \R inside
-various systems and web services that provide on-demand calculating and plotting
-over the internet. These services have to respond quickly and with minimal
+various systems and web services to provide on-demand calculating and plotting
+over the internet. These services need to respond quickly and with minimal
 overhead to incoming requests, and should scale to serve many jobs per second.
 Furthermore the systems need to be stable, requiring that jobs should always
 return within a given timeframe. Depending on user and the type of job,
 different security restrictions might be appropriate. Some services specifically
-allow for arbitrary execution of \R code. Also we need a way to dynamically
-enforce limits on the use of memory, processors and disk space on a per process
-basis. These requirements demand a more flexible and finer degree of control
-over the process privileges and restrictions than the first two use cases. It
-encouraged us to explore more advanced methods than the conventional tools and
-has been the most central motivation of this research.
+allow for arbitrary execution of \R code. Also we need to dynamically enforce
+limits on the use of memory, processors and disk space on a per process basis.
+These requirements demand a more flexible and finer degree of control over the
+process privileges and restrictions than the first two use cases. It encouraged
+us to explore more advanced methods than the conventional tools and has been
+the most central motivation of this research.
 
 \subsection{System privileges and hardware resources}
 
@@ -284,8 +279,8 @@ without any restrictions can get us in serious trouble. For example, the code
 could call the \texttt{system()} function from where any shell commands can be
 executed. But also innocent looking functions like \texttt{read.table} can be
 used to extract sensitive information from the system, e.g.\
-\texttt{read.table("/etc/passwd")} gives a list of users on the system or
-\texttt{readLines("/var/log/syslog")} shows system log information.
+\texttt{read.table("/etc/passwd")} lists all users on the system or
+\texttt{readLines("/var/log/syslog")} exposes system log information.
 
 Even an \R process running as a non-privileged user can do a lot of harm.
 Potential perils include code containing or downloading a virus or security
@@ -366,7 +361,7 @@ embedding \R in systems or shared facilities, it is important that we
 acknowledge this facet and have systems in place to manage jobs and mitigate
 problems without manual intervention.
 
-\section[Different approaches of confining R]{Different approaches of confining
+\section[Various approaches of confining R]{Various approaches of confining
 \R}
 
 The current section introduces several approaches of securing and sandboxing \R,
@@ -691,8 +686,11 @@ sudo apt-get install r-cran-rapparmor
 \end{CodeInput}
 \end{CodeChunk}
 
-The \texttt{r-cran-rapparmor} package can also be build from the source \R
-package using something along the lines of the following:
+Binaries in this repository are build for the version of \R that ships with the
+operating system. To get builds for \R version 3.0 and up, use repository
+\texttt{ppa:opencpu/rapparmor-dev} instead. The \texttt{r-cran-rapparmor}
+package can also be build from source using something along the lines of the
+following:
 
 \begin{CodeChunk}
 \begin{CodeInput}

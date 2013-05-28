@@ -1,0 +1,14 @@
+#TeXlipse project settings
+#Tue May 28 16:05:07 PDT 2013
+markTmpDer=true
+builderNum=2
+outputDir=
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=
+mainTexFile=jss975.tex
+outputFile=jss975.pdf
+langSpell=
+markDer=true
+srcDir=

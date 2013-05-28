@@ -89,7 +89,7 @@ transforming the landscape of data analysis. This is only the beginning. Sharing
 of data, code and results on social computing platforms will likely become an
 integral part of the publication process \citep{asareport}. This could address
 some of the hardware challenges, but also contribute towards reproducible
-research and further socialize data analysis, i.e. improve learning,
+research and further socialize data analysis, i.e. facilitate learning,
 collaboration and integration. These developments shift the role of
 statistical software towards more general purpose computational back-ends,
 powering systems and applications with embedded analytics and visualization.
@@ -252,7 +252,7 @@ overhead to incoming requests, and should scale to serve many jobs per second.
 Furthermore the systems need to be stable, requiring that jobs should always
 return within a given timeframe. Depending on user and the type of job,
 different security restrictions might be appropriate. Some services specifically
-allow for arbitrary execution of \R code. Also we need to dynamically enforce
+allow for execution of arbitrary \R code. Also we need to dynamically enforce
 limits on the use of memory, processors and disk space on a per process basis.
 These requirements demand a more flexible and finer degree of control over the
 process privileges and restrictions than the first two use cases. It encouraged
@@ -548,7 +548,7 @@ Moreover, even when sanitizing of the code is successful, this method does not
 limit the use of hardware resources in any way. Hence, additional methods are
 still required to prevent excessive use of resources in a public environment.
 Packages like \pkg{sandboxR} should probably only be used to supplement system
-level security like implemented in the \RAppArmor package. They can be useful to
+level security as implemented in the \RAppArmor package. They can be useful to
 detect problematic calls earlier on and present informative errors naming a
 specific forbidden function rather than just "permission denied". But
 blacklisting solutions are not waterproof and should not be considered a full
@@ -768,7 +768,7 @@ installed.
 The \RAppArmor package interfaces to a number of \Linux system calls that are
 useful in the context of security and sandboxing. The advantage of calling
 these directly from \R is that we can dynamically set the parameters from
-within the \R process, as opposed to fixing them for each \R session. Hence it
+within the \R process, as opposed to fixing them for all \R sessions. Hence it
 is actually possible to execute some parts of an application in a different
 security context other parts.
 
@@ -929,7 +929,7 @@ has functions to get/set to the following RLIMITs:
 
 For all of the above \texttt{RLIMITs}, the \RAppArmor package implements a
 function which name is equivalent to the non-capitalized name of the
-\texttt{RLIMIT}. For example to get/set \texttt{RLIMIT\_AS}, one can call
+\texttt{RLIMIT}. For example to get/set \texttt{RLIMIT\_AS}, the user calls
 \texttt{rlimit\_as()}. Every \texttt{rlimit\_} function has exactly 3 parameters:
 \texttt{hardlim}, \texttt{softlim}, and \texttt{pid}. Each argument is
 specified as an integer value. The \texttt{pid} arguments points to the target
@@ -1117,8 +1117,8 @@ the \texttt{usr.bin.r} file defines a profile specific to a filepath:
 \end{verbatim}
 
 When using the latter syntax, the profile is automatically associated every
-time the file \texttt{/usr/bin/R} is executed (which is the file that runs when
-\R is started from the shell). This way we can set some default security
+time the file \texttt{/usr/bin/R} is executed (which is the script that runs
+when \R is started from the shell). This way we can set some default security
 restrictions for our daily work. Profiles tied to a specific program can be
 activated only by the administrator using:
 \begin{verbatim}
@@ -1169,7 +1169,7 @@ which permissions need to be added to the profile to make the program work
 under normal behavior. \AppArmor even ships with a utility named
 \texttt{aa-logprof} which can help the administrator by parsing these log files and
 suggesting new rules to be added to the profile. This is a nice way of
-debugging a profile, and figuring out which permissions exactly a program
+debugging a profile, and figure out which permissions exactly a program
 requires to do its work.
 
 \section[Profiling R: Defining security policies]{Profiling \R: Defining
@@ -1244,7 +1244,8 @@ files in common shared system directories, e.g.\ \texttt{/usr/lib,
 /usr/local/lib, /usr/share}, etc. However, the default profile only grants
 write access inside \texttt{/tmp}, not in e.g.\ the home directory. Furthermore,
 \R is allowed to execute any of the shell commands in \texttt{/bin}
-or \texttt{/usr/bin} for which the program will inherit the restrictions.
+or \texttt{/usr/bin} for which the program will inherit the current
+restrictions.
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -1363,11 +1364,12 @@ of R. It extends the \texttt{r-compile} profile with some additional privileges
 in the user's home directory. The variable \texttt{@\{HOME\}} is defined in the
 \texttt{/etc/apparmor.d/tunables/global} include that ships with \AppArmor and
 matches the location of the user home directory, i.e.\ \texttt{/home/jeroen/}.
-If there is a exists a directory named \R directly inside the home directory
-(e.g \texttt{/home/jeroen/R/}), \R is allowed to read and here. Furthermore, \R
-can load and execute files in the directories \texttt{i686-pc-linux-gnu-library}
-and \texttt{x86\_64-pc-linux-gnu-library} inside of this directory. These are
-the standard locations where \R installs a user's personal package library.
+If a directory named \texttt{R} exists inside the home directory 
+(e.g \texttt{/home/jeroen/R/}), \R has both read and write permissions here.
+Furthermore, \R can load and execute files in the directories
+\texttt{i686-pc-linux-gnu-library} and \texttt{x86\_64-pc-linux-gnu-library}
+inside of this directory. These are the standard locations where \R installs a
+user's personal package library.
 
 With the \texttt{r-user} profile, we can do most of our day to day work,
 including installing and loading new packages in our personal library, while
@@ -1443,7 +1445,7 @@ of a safer \R.
 
 \section{Acknowledgments}
 
-We owe a thank you to several people who have been specifically helpful in the
+We owe gratitude to several people who have been specifically helpful in the
 course of this research. Things would not have been possible without their 
 valuable criticism, support and feedback. Among others these include Dirk
 Eddelbuettel and Michael Rutter for providing excellent packages for the Debian
@@ -1679,14 +1681,14 @@ R> print(x)
 NULL
 \end{CodeInput}
 \end{CodeChunk}
-However, this is actually a bit of a harsh measure: because the kernel actually
-terminates the process after 5 seconds we have no control over what should
-happen, nor can we throw an informative error. Setting \texttt{RLIMIT\_CPU} is
-a bit like starting a job with a self-destruction timer. A more elegant
-solution is to terminate the process from \R using the \texttt{timeout}
-argument from the \texttt{eval.secure} function. Because the actual job is
-processed in a fork, the parent process stays responsive, and is used to kill
-the child process.
+However, this is actually a bit of a harsh measure: because the kernel
+automatically terminates the process after 5 seconds we have no control over
+what should happen when this happens, nor can we throw an informative error.
+Setting \texttt{RLIMIT\_CPU} is a bit like starting a job with a
+self-destruction timer. A more elegant solution is to terminate the process
+from \R using the \texttt{timeout} argument from the \texttt{eval.secure}
+function. Because the actual job is processed in a fork, the parent process
+stays responsive, and is used to kill the child process.
 \begin{CodeChunk}
 \begin{CodeInput}
 R> system.time(x <- eval.secure(cputest(), timeout=5))
